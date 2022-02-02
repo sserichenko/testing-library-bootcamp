@@ -1,0 +1,9 @@
+.pet-cards-container {
+    text-align: center;
+    margin:  0 auto;
+    width: 80%;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    
+  }
