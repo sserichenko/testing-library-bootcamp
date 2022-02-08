@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvents from "@testing-library/user-event";
+import {PetsContext} from "../../Pets/Pets";
+import cats from "../../../mocks/cats.json";
 import Card from '../Card';
 
 const cardProps = {
@@ -11,11 +13,19 @@ const cardProps = {
     alt: 'Cute cat',
   },
   favoured: false,
+  index: 1
 };
+
+const renderCardComponentWithProvider = (props) => {
+  render(<PetsContext.Provider value={{cats: cats, setCats: () => {}}}>
+        <Card {...props} />
+      </PetsContext.Provider>);
+}
+
 
 describe('Card component', () => {
   test('Should show the name of the cat', () => {
-    render(<Card {...cardProps} />);
+    renderCardComponentWithProvider(cardProps);
     expect(
       screen.getByRole('heading', {
         name: /sidney/i,
@@ -24,34 +34,34 @@ describe('Card component', () => {
   });
 
   test('Should show the phone number', () => {
-    render(<Card {...cardProps} />);
+    renderCardComponentWithProvider(cardProps);
     expect(screen.getByText(/111-11-1111/i)).toBeInTheDocument();
   });
 
   test('Should show the email', () => {
-    render(<Card {...cardProps} />);
+    renderCardComponentWithProvider(cardProps);
     expect(screen.getByText(/sidney@gmail.com/i)).toBeInTheDocument();
   });
 
   test('Should show image with correct src', () => {
-    render(<Card {...cardProps} />);
+    renderCardComponentWithProvider(cardProps);
     expect(screen.getByAltText(/cute cat/i).src).toBe(cardProps.image.url)
   });
 
   test("Should show outlined heart", () => {
-    render(<Card {...cardProps} />);
+    renderCardComponentWithProvider(cardProps);
     expect(screen.queryByAltText(/filled heart/i)).not.toBeInTheDocument();
     expect(screen.getByAltText(/oulined heart/i)).toBeInTheDocument();
   });
 
   test("Should show filled heart", () => {
-    render(<Card {...cardProps} favoured={true} />);
+    renderCardComponentWithProvider({...cardProps, favoured: true});
     expect(screen.queryByAltText(/oulined heart/i)).not.toBeInTheDocument();
     expect(screen.getByAltText(/filled heart/i)).toBeInTheDocument();
   });
 
   test("Should toggle heart status", () => {
-    render(<Card {...cardProps} />);
+    renderCardComponentWithProvider({...cardProps});
     userEvents.click(screen.getByRole("button"));
     expect(screen.queryByAltText(/oulined heart/i)).not.toBeInTheDocument();
     expect(screen.getByAltText(/filled heart/i)).toBeInTheDocument();
